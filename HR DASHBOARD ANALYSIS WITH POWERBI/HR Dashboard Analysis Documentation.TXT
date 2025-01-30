@@ -1,0 +1,147 @@
+HR Dashboard Documentation
+Overview:
+This HR Dashboard is designed to offer a comprehensive view of key human resource metrics, including employee demographics, salary data, growth trends, and leave balances. By visualizing these data points, this dashboard helps HR managers and decision-makers gain valuable insights into the organization’s workforce.
+Dataset Columns:
+Name: Employee’s full name
+EmpID: Employee’s ID number
+Gender: Employee’s gender
+Education Qualification: Highest level of education completed by the employee
+Date of Job: Date the employee joined the company
+Job Title: Employee’s role within the organization
+Salary: Employee’s salary
+Age: Employee’s age
+Leave Balance: Remaining leave days for the employee
+Key Metrics and Visualizations:
+
+1. Headcount per Job Title:
+What it shows: Displays the number of employees in each job title.
+Chart Type: Clustered Bar Chart
+Key Setup: 
+Y-Axis: Job Title
+X-Axis: Headcount (calculated as the number of rows for each job title)
+
+2. Gender Breakdown of the Staff:
+What it shows: The proportion of male and female employees, with an option to filter by job title.
+Chart Type: Pie or Bar Chart
+Key Setup: 
+Legend: Gender
+Slicer: Job Title
+
+3. Age Distribution of Employees:
+What it shows: The age distribution of employees grouped into 5-year bins.
+Chart Type: Stacked Column Chart
+Key Setup: 
+Right-click on the Age column → Group by 5-year intervals
+Use small multiples for layout (2 rows, 1 column)
+
+4. Highest Paying Jobs:
+What it shows: Displays average, minimum, and maximum salary by job title.
+Chart Type: Table
+Key Setup: 
+New Measures: 
+Avg. Salary = AVERAGE(staff[salary])
+Min. Salary = MIN(staff[salary])
+Max. Salary = MAX(staff[salary])
+Table Columns: Job Title, Average Salary, Headcount, Min Salary, Max Salary
+
+5. Top Earners in Each Job:
+What it shows: Identifies the top 3 highest-earning employees within each job title.
+Chart Type: Clustered Bar Chart
+Key Setup: 
+Filter: Show Top 3 employees by salary
+Y-Axis: Job Title
+X-Axis: Salary
+Filter Criteria: Top N = 3, Sorted by Sum of Salary
+Filter DAX Formula: 
+Top Earners = 
+CALCULATE(
+    SUM(staff[salary]),
+    TOPN(3, staff, staff[salary], DESC)
+)
+
+6. Qualification vs Salary:
+What it shows: Correlates education level with salary.
+Chart Type: Scatter Chart
+Key Setup: 
+X-Axis: Salary (do not summarize)
+Y-Axis: Education Qualification (grouped by categories like High School, Degree, Post-Graduate)
+Data Transformation: 
+Use Power Query to categorize education qualification: 
+H → High School
+D → Degree
+B → Post-Graduate
+Apply Conditional Columns to categorize education qualifications.
+
+7. Staff Growth Trend:
+What it shows: Tracks the cumulative headcount over time based on the employee's date of joining.
+Chart Type: Line Chart
+Key Setup: 
+X-Axis: Date of Join (continuous timeline)
+Y-Axis: Cumulative Headcount
+New Measure: 
+Cumulative Headcount = 
+VAR currentDate = LASTDATE(staff[date_of_join])
+RETURN
+CALCULATE(
+    COUNT(staff[EmpID]), 
+    FILTER(
+        staff, 
+        staff[date_of_join] <= currentDate
+    )
+)
+
+8. Employee Filter by Starting Letter:
+What it shows: Filters employees by the first letter of their name.
+Key Setup: 
+First Character Extract: Use DAX to extract the first character of employee names for filtering.
+FirstLetter = LEFT(staff[Name], 1)
+
+9. Leave Balance Analysis:
+What it shows: Displays average leave balance and identifies employees with more than 20 days of leave remaining.
+Chart Type: Stacked Bar Chart
+Key Setup: 
+New Measures: 
+Avg. Leave Balance = AVERAGE(staff[leave_balance])
+LBL Over 20 Days = CALCULATE(COUNT(staff[EmpID]), staff[leave_balance] > 20)
+Chart Columns: Job Title, Average Leave Balance, Number of Employees with Leave > 20
+
+10. Quick Key Metrics Dashboard:
+What it shows: A high-level overview of essential HR metrics like headcount, average salary, and leave balances.
+Metrics Displayed: 
+Headcount
+Average Salary
+Average Leave Balance (LBL)
+Number of employees with more than 20 days of Leave Balance
+Key Setup: 
+Cards layout with 10px spacing
+Card Color: Blue fill
+Font: Arial for values, Segoe UI for labels
+________________________________________
+Design and Layout Notes:
+Canvas Background: Opt for a neutral or soft color that allows the charts and cards to stand out.
+Card Visuals: 
+Use blue fill for cards to create a uniform, clean design.
+Use Arial font for numeric values and Segoe UI for labels to maintain readability.
+Shadows and Borders: Enable shadows and borders for card visuals to help them stand out.
+Slicers: Implement slicers for interactivity, including filters for job title and employee names.
+________________________________________
+Power Query Transformations:
+Data Cleaning:
+Remove duplicates in the dataset to ensure accuracy.
+Sort data as required for each visualization (e.g., sorting by salary, date of join).
+Create Conditional Columns:
+Categorize education qualifications using Conditional Columns.
+For example, classify High School as 1, Degree as 2, and Post-Graduate as 3.
+This can be done using Power Query’s conditional logic options.
+Data Types:
+Ensure the Date of Join column is set as a Date type for time-based calculations.
+Ensure Salary and Leave Balance columns are set as Numeric types.
+________________________________________
+Conclusion:
+This HR Dashboard provides a robust and interactive way to analyse and visualize key HR metrics. 
+With clear visuals on employee demographics, salary distributions, job growth, and leave balances, 
+this dashboard enables HR managers and decision-makers to track and make informed decisions on various aspects of the workforce.
+Using slicers and filters, users can easily drill down into specific data points for more detailed insights.
+Feel free to reach out if you need additional help with any part of the Power BI setup or further clarification on specific visualizations!
+==========================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+
